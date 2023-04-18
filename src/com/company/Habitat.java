@@ -451,7 +451,7 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
         g1.drawLine(1034, 631, 1250, 631);
         for (Objects i : Object) {
             for(Objects a : Object) {
-                Image img = null;
+                java.awt.Image img = null;
                 if (a.nomer == 1) {
                     g.setColor(Color.YELLOW);
                     g.fillOval(a.x, a.y, 100, 100);
