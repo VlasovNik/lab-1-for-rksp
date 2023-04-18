@@ -1,8 +1,7 @@
 package com.company;
-import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Random;
+import java.awt.Rectangle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Objects implements MoveAI, Serializable {
@@ -27,17 +26,20 @@ public abstract class Objects implements MoveAI, Serializable {
     public abstract double Getangle();
 
     public abstract void Setangle(int an);
+
+    public boolean contains(int x, int y) {
+
+        return false;
+    }
 }
 
 class Smile extends Objects implements Serializable {
-    private ArrayList<Polygon> polygons; // список многоугольников
     private Random rand; // генератор случайных чисел
 
     public Smile(int n) {
         super();
         if(n == 1){
             this.isanim = 1;
-
         }
         else{
             this.isanim = 0;
@@ -77,9 +79,6 @@ class Smile extends Objects implements Serializable {
 
                 speedX += deltaX; // добавляем изменение к скорости по x
                 speedY += deltaY; // добавляем изменение к скорости по y
-
-                speedX *= damping; // затухаем скорость по x
-                speedY *= damping; // затухаем скорость по y
 
                 avgX += speedX; // обновляем среднее значение по x
                 avgY += speedY; // обновляем среднее значение по y
