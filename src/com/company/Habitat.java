@@ -1,5 +1,6 @@
 package com.company;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -11,6 +12,7 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
     JFrame f = new JFrame("Lab1-3");
     private ActionListener Actions;
     private static Habitat Instance;
+    String text = "Hello, World!";
     private int N1 = 2;
     private int N2 = 3;
     private int P1 = 0;
@@ -448,15 +450,19 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
         g1.drawLine(1, 631, 1, 1);
         g1.drawLine(1034, 631, 1250, 631);
         for (Objects i : Object) {
-            Image img = new ImageIcon("src/1.png").getImage();
-            for(Objects a : Object){
-                if (a.nomer==1){
+            for(Objects a : Object) {
+                Image img = null;
+                if (a.nomer == 1) {
+                    g.setColor(Color.YELLOW);
+                    g.fillOval(a.x, a.y, 100, 100);
+                    g.setColor(Color.BLACK);
+                    g.fillOval(a.x+25, a.y+25, 10, 10);
+                    g.fillOval(a.x+65, a.y+25, 10, 10);
+                    g.drawArc(a.x+20, a.y+50, 60, 30, 180, 180);
+                } else {
                     img = new ImageIcon("src/1.png").getImage();
+                    g1.drawImage(img, (int) a.x, (int) a.y, 70, 54, this);
                 }
-                else{
-                    img = new ImageIcon("src/2.png").getImage();
-                }
-                g1.drawImage(img, (int) a.x, (int) a.y,70,54,this);
             }
         }
     }
@@ -468,9 +474,9 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
                 int x = random.nextInt(100);
                 if (x <= P1) {
                     if (isAnim == true) {
-                        Object.add(new Mnogoygol(1));
+                        Object.add(new Text(1));
                     } else {
-                        Object.add(new Mnogoygol(0));
+                        Object.add(new Text(0));
                     }
                     ID.add(Object.get(Object.size() - 1).id);
                     if (GoldLifeTime != 0) {

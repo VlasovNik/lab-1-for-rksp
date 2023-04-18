@@ -1,5 +1,9 @@
 package com.company;
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Objects implements MoveAI, Serializable {
@@ -20,54 +24,52 @@ public abstract class Objects implements MoveAI, Serializable {
     }
 }
 
-class Mnogoygol extends Objects implements Serializable {
+class Text extends Objects implements Serializable {
+    private ArrayList<Polygon> polygons; // список многоугольников
+    private Random rand; // генератор случайных чисел
 
-    public Mnogoygol(int i) {
+    public Text(int n) {
         super();
-        if(i == 1){
+        if(n == 1){
             this.isanim = 1;
         }
         else{
             this.isanim = 0;
         }
         this.nomer = 1;
-        intel = new MnogoygolAI(this);
+        intel = new TextAI(this);
         intel.start();
     }
-    class MnogoygolAI extends BaseAI implements Serializable{
 
-        public MnogoygolAI(MoveAI moveAI) {
+    class TextAI extends BaseAI implements Serializable{
+
+        public TextAI(MoveAI moveAI) {
             super(moveAI);
         }
         @Override
         public void Move() {
             int t = Isanim();
             if (t == 1) {
-                int yy = 1;
-                int i = Gety();
-                int k = GetPoz();
-                if (k == 0) {
-                    if (i < 580) {
-                        i += yy;
-                        Move.Sety(i);
-                        k = 0;
-                    } else {
-                        k = 1;
-                        Move.SetPoz(k);
-                    }
-                } else if (k == 1) {
-                    if (i != 0) {
-                        i -= yy;
-                        Move.Sety(i);
-                    } else {
-                        k = 0;
-                        Move.SetPoz(k);
-                    }
+                double avgX = Getx(); // получаем начальное среднее значение по x
+                double avgY = Gety(); // получаем начальное среднее значение по y
+                double speedX = 0; // начальная скорость по x
+                double speedY = 0; // начальная скорость по y
+                double damping = 0.98; // коэффициент затухания скорости
+                double deltaX = (Math.random() * 2 - 1) * 10; // случайное изменение по x
+                double deltaY = (Math.random() * 2 - 1) * 10; // случайное изменение по y
 
+                speedX += deltaX; // добавляем изменение к скорости по x
+                speedY += deltaY; // добавляем изменение к скорости по y
+
+                speedX *= damping; // затухаем скорость по x
+                speedY *= damping; // затухаем скорость по y
+
+                avgX += speedX; // обновляем среднее значение по x
+                avgY += speedY; // обновляем среднее значение по y
+                Move.Setx((int) avgX);
+                Move.Sety((int) avgY);
                 }
             }
-        }
-
     }
     @Override
     public int Getx() {
