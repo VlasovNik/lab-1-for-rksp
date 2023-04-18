@@ -109,9 +109,9 @@ class Text extends Objects implements Serializable {
 
 }
 
-class Smile extends Objects implements Serializable{
+class Image extends Objects implements Serializable{
 
-    public Smile(int i) {
+    public Image(int i) {
         super();
         if(i == 1){
             this.isanim = 1;
@@ -120,12 +120,12 @@ class Smile extends Objects implements Serializable{
             this.isanim = 0;
         }
         this.nomer = 2;
-        intel = new SmileAI(this);
+        intel = new ImageAI(this);
         intel.start();
     }
-    class SmileAI extends BaseAI implements Serializable{
+    class ImageAI extends BaseAI implements Serializable{
 
-        public SmileAI(MoveAI moveAI) {
+        public ImageAI(MoveAI moveAI) {
             super(moveAI);
         }
         @Override

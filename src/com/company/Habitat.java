@@ -492,9 +492,9 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
                 int x = random.nextInt(100);
                 if (x <= P2) {
                     if (isAnim == true) {
-                        Object.add(new Smile(1));
+                        Object.add(new Image(1));
                     } else {
-                        Object.add(new Smile(0));
+                        Object.add(new Image(0));
                     }
                     ID.add(Object.get(Object.size() - 1).id);
                     if (GuppiLifeTime != 0) {
