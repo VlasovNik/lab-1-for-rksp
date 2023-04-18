@@ -8,4 +8,5 @@ public interface MoveAI {
     int GetPoz();
     void SetPoz(int poz);
     int Isanim();
+    void Setangle(double k);
 }

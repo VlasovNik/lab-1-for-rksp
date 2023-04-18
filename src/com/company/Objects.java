@@ -1,6 +1,5 @@
 package com.company;
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -8,6 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Objects implements MoveAI, Serializable {
     public int nomer,x,y,id,Lifetime,pozition,isanim;
+    public Rectangle bounds;
+    public double angle = 0;
     public BaseAI intel;
     public Objects(){
         this.x = ThreadLocalRandom.current().nextInt(0, 980 + 1);
@@ -22,28 +23,44 @@ public abstract class Objects implements MoveAI, Serializable {
     public void stopAN(){
         intel.Wait();
     }
+
+    public abstract double Getangle();
+
+    public abstract void Setangle(int an);
 }
 
-class Text extends Objects implements Serializable {
+class Smile extends Objects implements Serializable {
     private ArrayList<Polygon> polygons; // список многоугольников
     private Random rand; // генератор случайных чисел
 
-    public Text(int n) {
+    public Smile(int n) {
         super();
         if(n == 1){
             this.isanim = 1;
+
         }
         else{
             this.isanim = 0;
         }
         this.nomer = 1;
-        intel = new TextAI(this);
+        intel = new SmileAI(this);
         intel.start();
     }
 
-    class TextAI extends BaseAI implements Serializable{
+    @Override
+    public double Getangle() {
+        return 0;
+    }
 
-        public TextAI(MoveAI moveAI) {
+    @Override
+    public void Setangle(int an) {
+
+    }
+
+
+    class SmileAI extends BaseAI implements Serializable{
+
+        public SmileAI(MoveAI moveAI) {
             super(moveAI);
         }
         @Override
@@ -106,6 +123,11 @@ class Text extends Objects implements Serializable {
         return this.isanim;
     }
 
+    @Override
+    public void Setangle(double k) {
+
+    }
+
 
 }
 
@@ -113,6 +135,7 @@ class Image extends Objects implements Serializable{
 
     public Image(int i) {
         super();
+        this.angle = 0;
         if(i == 1){
             this.isanim = 1;
         }
@@ -131,29 +154,9 @@ class Image extends Objects implements Serializable{
         @Override
         public void Move() {
             int t = Isanim();
-            if (t == 1) {
-                int xx = 1;
-                int i = Getx();
-                int k = GetPoz();
-                if (k == 0) {
-                    if (i < 980) {
-                        i += xx;
-                        Move.Setx(i);
-                    } else {
-                        k = 1;
-                        Move.SetPoz(k);
-                    }
-                } else if (k == 1) {
-                    if (i != 0) {
-                        i -= xx;
-                        Move.Setx(i);
-                    } else {
-                        k = 0;
-                        Move.SetPoz(k);
-                    }
-
-                }
-            }
+            double k = Getangle();
+            k++;
+            Move.Setangle(k);
         }
 
     }
@@ -166,6 +169,16 @@ class Image extends Objects implements Serializable{
     public int Gety() {
         return this.y;
     }
+    @Override
+    public double Getangle() {
+        return this.angle;
+    }
+
+    @Override
+    public void Setangle(int an) {
+
+    }
+
 
     @Override
     public void Setx(int xx) {
@@ -190,6 +203,11 @@ class Image extends Objects implements Serializable{
     @Override
     public int Isanim() {
         return this.isanim;
+    }
+
+    @Override
+    public void Setangle(double k) {
+        this.angle = k;
     }
 
 }

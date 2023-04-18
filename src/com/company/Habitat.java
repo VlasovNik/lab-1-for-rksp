@@ -1,6 +1,8 @@
 package com.company;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
@@ -89,7 +91,7 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
     private JComboBox editComboBox2 = new JComboBox(items);
 
     //список объектов
-    public static Vector<Objects> Object = new Vector<Objects>();
+    public static ArrayList<Objects> Object = new ArrayList<Objects>();
     private static HashSet<Integer> ID = new HashSet<Integer>();
     private static TreeMap<Integer, Integer> Borntime = new TreeMap<Integer, Integer>();
 
@@ -451,7 +453,8 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
         g1.drawLine(1034, 631, 1250, 631);
         for (Objects i : Object) {
             for(Objects a : Object) {
-                java.awt.Image img = null;
+                java.awt.Image img;
+                img = new ImageIcon("src/1.png").getImage();
                 if (a.nomer == 1) {
                     g.setColor(Color.YELLOW);
                     g.fillOval(a.x, a.y, 100, 100);
@@ -460,8 +463,23 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
                     g.fillOval(a.x+65, a.y+25, 10, 10);
                     g.drawArc(a.x+20, a.y+50, 60, 30, 180, 180);
                 } else {
-                    img = new ImageIcon("src/1.png").getImage();
+                    BufferedImage bufferedImage = (BufferedImage) img;
+                    int width = bufferedImage.getWidth();
+                    int height = bufferedImage.getHeight();
+                    // Сохраняем текущую матрицу преобразования
+                    a.bounds = new Rectangle(0, 0, width, height);
+                    AffineTransform oldTransform = g1.getTransform();
+                    // Создаем матрицу преобразования
+                    AffineTransform transform = new AffineTransform();
+                    transform.translate(a.x, a.y);
+                    transform.rotate(a.angle);
+                    transform.translate(-a.x, -a.y);
+                    // Применяем матрицу преобразования к графическому контексту
+                    g1.setTransform(transform);
+                    // Рисуем картинку
                     g1.drawImage(img, (int) a.x, (int) a.y, 70, 54, this);
+                    // Восстанавливаем исходную матрицу преобразования
+                    g1.setTransform(oldTransform);
                 }
             }
         }
@@ -474,9 +492,9 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
                 int x = random.nextInt(100);
                 if (x <= P1) {
                     if (isAnim == true) {
-                        Object.add(new Text(1));
+                        Object.add(new Smile(1));
                     } else {
-                        Object.add(new Text(0));
+                        Object.add(new Smile(0));
                     }
                     ID.add(Object.get(Object.size() - 1).id);
                     if (GoldLifeTime != 0) {
@@ -737,7 +755,7 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
                 try {
                     FileInputStream fis = new FileInputStream("src/obj.dat");
                     ObjectInputStream iis = new ObjectInputStream(fis);
-                    Object = (Vector<Objects>) iis.readObject();
+                    Object = (ArrayList<Objects>) iis.readObject();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -800,7 +818,21 @@ public class Habitat extends JComponent implements ActionListener, KeyListener,S
             }
         }
     }
-
+    public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        boolean objectClicked = false;
+        for (int i = Object.size() - 1; i >= 0; i--) {
+            if (Object.get(i).contains(x, y)) {
+                Object.remove(i);
+                objectClicked = true;
+                break;
+            }
+        }
+        if (!objectClicked) {
+            Object.add(new Image(1));
+        }
+    }
     @Override
     public void keyReleased(KeyEvent e) {
 
