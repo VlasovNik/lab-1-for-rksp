@@ -1,24 +1,10 @@
 package com.company;
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import java.io.Serializable;
-import java.util.Random;
-import java.awt.Rectangle;
 import java.util.concurrent.ThreadLocalRandom;
-@XStreamAlias("Objects")
+
 public abstract class Objects implements MoveAI, Serializable {
-    @XStreamAsAttribute
-    public int nomer;
-    @XStreamAsAttribute
-    public int x;
-    @XStreamAsAttribute
-    public int y;
-    @XStreamAsAttribute
-    public int id;
-    @XStreamAsAttribute
-    public int isanim;
-    public Rectangle bounds;
+    public int nomer, x, y, id, isanim;
     public double angle = 0;
     public BaseAI intel;
     public Objects(){
@@ -39,16 +25,8 @@ public abstract class Objects implements MoveAI, Serializable {
         intel.Wait();
     }
 
-    public abstract double Getangle();
-
-    public abstract void Setangle(int an);
-
-    public boolean contains(int x, int y) {
-
-        return false;
-    }
 }
-@XStreamAlias("Smile")
+
 class Smile extends Objects implements Serializable {
     public Smile(int n) {
         super();
@@ -62,18 +40,22 @@ class Smile extends Objects implements Serializable {
         intel = new SmileAI(this);
         intel.start();
     }
-
-    @Override
-    public double Getangle() {
-        return 0;
+    public Smile(int n,int x, int y) {
+        super();
+        if(n == 1){
+            this.isanim = 1;
+        }
+        else{
+            this.isanim = 0;
+        }
+        this.x = x;
+        this.y = y;
+        this.nomer = 1;
+        intel = new SmileAI(this);
+        intel.start();
     }
 
-    @Override
-    public void Setangle(int an) {
 
-    }
-
-    @XStreamAlias("SmileAI")
     class SmileAI extends BaseAI implements Serializable{
 
         public SmileAI(MoveAI moveAI) {
@@ -134,7 +116,7 @@ class Smile extends Objects implements Serializable {
 
 
 }
-@XStreamAlias("Image")
+
 class Image extends Objects implements Serializable{
 
     public Image(int i) {
@@ -150,7 +132,22 @@ class Image extends Objects implements Serializable{
         intel = new ImageAI(this);
         intel.start();
     }
-    @XStreamAlias("ImageAI")
+    public Image(int i,int x, int y) {
+        super();
+        this.angle = 0;
+        if(i == 1){
+            this.isanim = 1;
+        }
+        else{
+            this.isanim = 0;
+        }
+        this.x = x;
+        this.y = y;
+        this.nomer = 2;
+        intel = new ImageAI(this);
+        intel.start();
+    }
+
     class ImageAI extends BaseAI implements Serializable{
 
         public ImageAI(MoveAI moveAI) {
@@ -159,9 +156,11 @@ class Image extends Objects implements Serializable{
         @Override
         public void Move() {
             int t = Isanim();
-            double k = Getangle();
-            k++;
-            Move.Setangle(k);
+            if (t ==1){
+                double k = 0;
+                k++;
+                Move.Setangle(k);
+            }
         }
 
     }
@@ -174,16 +173,6 @@ class Image extends Objects implements Serializable{
     public int Gety() {
         return this.y;
     }
-    @Override
-    public double Getangle() {
-        return this.angle;
-    }
-
-    @Override
-    public void Setangle(int an) {
-
-    }
-
 
     @Override
     public void Setx(int xx) {

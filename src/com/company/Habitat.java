@@ -1,14 +1,12 @@
 package com.company;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 
 public class Habitat extends JComponent implements ActionListener, Serializable, MouseListener {
     JFrame f = new JFrame("Lab1");
@@ -49,8 +47,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     private static final JLabel Line5 = new JLabel("----------------------------------------- ");
 
     //список объектов
-    @XStreamImplicit
-    public static ArrayList<Objects> Object = new ArrayList<Objects>();
+    public static Vector<Objects> Object = new Vector<Objects>();
     //private static HashSet<Integer> ID = new HashSet<Integer>();
     //private static TreeMap<Integer, Integer> Borntime = new TreeMap<Integer, Integer>();
     java.awt.Image img = new ImageIcon("src/1.png").getImage();
@@ -100,6 +97,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             }
         });
         t.setActionCommand("Timer");
+        t1.setActionCommand("Timer");
         t2.setActionCommand("Timer");
 
         //buttons
@@ -228,7 +226,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     // Сохраняем текущую матрицу преобразования
                     AffineTransform at = new AffineTransform();
                     at.translate(a.x, a.y); // перемещаем AffineTransform в центр изображения
-                    at.rotate(a.angle, width/4 , height/4 ); // поворачиваем AffineTransform на угол angle вокруг центра изображения
+                    at.rotate(0, width/4 , height/4 ); // поворачиваем AffineTransform на угол angle вокруг центра изображения
                     at.translate(-width/4, -height/4); // перемещаем AffineTransform обратно в левый верхний угол изображения
 
                     // рисуем изображение, используя AffineTransform
@@ -248,18 +246,6 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 repaint();
                 break;
             }
-            case "SpImage": {
-                int x = random.nextInt(100);
-                int width = img.getWidth(null);
-                int height = img.getHeight(null);
-                if (isAnimImage == true) {
-                    Object.add(new Image(1));
-                } else {
-                    Object.add(new Image(0));
-                }
-                break;
-            }
-
             case "Start": {
                 Object.add(new Smile(1));
                 Object.add(new Image(1));
@@ -268,11 +254,12 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     a.startANSmile();
                     a.startANImage();
                 }
-                if (t.isRunning() == false && t2.isRunning() == false) {
+                if (t.isRunning() == false &&t1.isRunning() == false && t2.isRunning() == false) {
                     time = 0;
                     Object.clear();
                     repaint();
                     t.start();
+                    t1.start();
                     t2.start();
                     repaint();
                 }
@@ -280,14 +267,15 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 break;
             }
             case "startAnimSmile":{
-                if (t.isRunning() == false) {
+                if (t1.isRunning() == false) {
                     for (Objects a : Object) {
                         if(a.nomer == 1){
                             a.isanim = 1;
                             a.startANSmile();
                         }
                     }
-                    t.start();
+                    isAnimSmile= true;
+                    t1.start();
                     repaint();
                 }
                 break;
@@ -300,20 +288,22 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                             a.startANImage();
                         }
                     }
+                    isAnimImage= true;
                     t2.start();
                     repaint();
                 }
                 break;
             }
             case "stopAnimSmile":{
-                if (t.isRunning() == true) {
+                if (t1.isRunning() == true) {
                     for (Objects a : Object) {
                         if(a.nomer == 1){
                             a.isanim = 0;
                             a.stopANSmile();
                         }
                     }
-                    t.stop();
+                    isAnimSmile= false;
+                    t1.stop();
                     repaint();
                 }
                 break;
@@ -326,6 +316,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                             a.stopANImage();
                         }
                     }
+                    isAnimImage= false;
                     t2.stop();
                     repaint();
                 }
@@ -339,6 +330,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                         a.stopANImage();
                     }
                     t.stop();
+                    t1.stop();
                     t2.stop();
                     repaint();
                 }
@@ -349,10 +341,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     FileOutputStream fos = new FileOutputStream("src/obj.dat");
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
                     oos.writeObject(Object);
-                    XStream xstream = new XStream();
-                    xstream.processAnnotations(Objects.class);
-                    String xml = xstream.toXML(Object);
-                    System.out.println(xml);
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -360,11 +349,12 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             }
             case "Readset": {
                 t.stop();
+                t1.stop();
                 t2.stop();
                 try {
                     FileInputStream fis = new FileInputStream("src/obj.dat");
                     ObjectInputStream iis = new ObjectInputStream(fis);
-                    Object = (ArrayList<Objects>) iis.readObject();
+                    Object = (Vector<Objects>) iis.readObject();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -386,15 +376,20 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
 
     @Override
     public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
         if(t.isRunning() == true){
             Point clickPoint = e.getPoint();
-            int x = clickPoint.x - f.getInsets().left;
-            int y = clickPoint.y - f.getInsets().top;
+            int x = clickPoint.x - 30;
+            int y = clickPoint.y - 30;
             Objects objToDelete = null;
-            int width = 100;
-            int height = 100;
+            Random random = new Random();
+            int randomInt = random.nextInt(2) + 1;
             for (Objects obj :Object) {
-                if ((x >= obj.x && x <= obj.x+100) || (y >= obj.y && y <= obj.y-100)) {
+                if ((x >= obj.x-15 && x <= obj.x+100) && (y >= obj.y-15 && y <= obj.y+100)) {
                     int k = obj.x;
                     int n = obj.y;
                     objToDelete = obj;
@@ -404,21 +399,25 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             if (objToDelete != null) {
                 Object.remove(objToDelete);
             } else {
-                if(isAnimSmile==true){
-                    Object.add(new Image(1));
-                    Object.add(new Smile(1));
+                if(randomInt == 1){
+                    if(isAnimImage == true){
+                        Object.add(new Image(1,x,y));
+                    }
+                    else{
+                        Object.add(new Image(0,x,y));
+                    }
                 }
                 else{
-                    Object.add(new Image(0));
-                    Object.add(new Smile(0));
+                    if(isAnimSmile == true){
+                        Object.add(new Smile(1,x,y));
+                    }
+                    else{
+                        Object.add(new Smile(0,x,y));
+                    }
                 }
             }
             repaint();
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
 
     }
 
