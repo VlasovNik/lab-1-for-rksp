@@ -1,5 +1,7 @@
 package com.company;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -47,6 +49,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     private static final JLabel Line5 = new JLabel("----------------------------------------- ");
 
     //список объектов
+    @XStreamImplicit
     public static ArrayList<Objects> Object = new ArrayList<Objects>();
     //private static HashSet<Integer> ID = new HashSet<Integer>();
     //private static TreeMap<Integer, Integer> Borntime = new TreeMap<Integer, Integer>();

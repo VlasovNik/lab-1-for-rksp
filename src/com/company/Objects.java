@@ -1,13 +1,23 @@
 package com.company;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import java.io.Serializable;
 import java.util.Random;
 import java.awt.Rectangle;
 import java.util.concurrent.ThreadLocalRandom;
-
+@XStreamAlias("Objects")
 public abstract class Objects implements MoveAI, Serializable {
-    public int nomer,x,y,id,isanim;
+    @XStreamAsAttribute
+    public int nomer;
+    @XStreamAsAttribute
+    public int x;
+    @XStreamAsAttribute
+    public int y;
+    @XStreamAsAttribute
+    public int id;
+    @XStreamAsAttribute
+    public int isanim;
     public Rectangle bounds;
     public double angle = 0;
     public BaseAI intel;
