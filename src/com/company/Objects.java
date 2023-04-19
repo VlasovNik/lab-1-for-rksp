@@ -1,11 +1,13 @@
 package com.company;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 import java.io.Serializable;
 import java.util.Random;
 import java.awt.Rectangle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Objects implements MoveAI, Serializable {
-    public int nomer,x,y,id,Lifetime,pozition,isanim;
+    public int nomer,x,y,id,isanim;
     public Rectangle bounds;
     public double angle = 0;
     public BaseAI intel;
@@ -13,13 +15,17 @@ public abstract class Objects implements MoveAI, Serializable {
         this.x = ThreadLocalRandom.current().nextInt(0, 980 + 1);
         this.y = ThreadLocalRandom.current().nextInt(0, 580 + 1);
         this.id = ThreadLocalRandom.current().nextInt(1, 9999);
-        this.Lifetime = ThreadLocalRandom.current().nextInt(2, 10);
-        this.pozition = 0;
     }
-    public void startAN(){
+    public void startANSmile(){
         intel.Notify();
     }
-    public void stopAN(){
+    public void stopANSmile(){
+        intel.Wait();
+    }
+    public void startANImage(){
+        intel.Notify();
+    }
+    public void stopANImage(){
         intel.Wait();
     }
 
@@ -32,10 +38,8 @@ public abstract class Objects implements MoveAI, Serializable {
         return false;
     }
 }
-
+@XStreamAlias("Smile")
 class Smile extends Objects implements Serializable {
-    private Random rand; // генератор случайных чисел
-
     public Smile(int n) {
         super();
         if(n == 1){
@@ -59,7 +63,7 @@ class Smile extends Objects implements Serializable {
 
     }
 
-
+    @XStreamAlias("SmileAI")
     class SmileAI extends BaseAI implements Serializable{
 
         public SmileAI(MoveAI moveAI) {
@@ -107,15 +111,6 @@ class Smile extends Objects implements Serializable {
         this.y = yy;
     }
 
-    @Override
-    public int GetPoz() {
-        return this.pozition;
-    }
-
-    @Override
-    public void SetPoz(int poz) {
-        this.pozition = poz;
-    }
 
     @Override
     public int Isanim() {
@@ -129,7 +124,7 @@ class Smile extends Objects implements Serializable {
 
 
 }
-
+@XStreamAlias("Image")
 class Image extends Objects implements Serializable{
 
     public Image(int i) {
@@ -145,6 +140,7 @@ class Image extends Objects implements Serializable{
         intel = new ImageAI(this);
         intel.start();
     }
+    @XStreamAlias("ImageAI")
     class ImageAI extends BaseAI implements Serializable{
 
         public ImageAI(MoveAI moveAI) {
@@ -189,15 +185,6 @@ class Image extends Objects implements Serializable{
         this.y = yy;
     }
 
-    @Override
-    public int GetPoz() {
-        return this.pozition;
-    }
-
-    @Override
-    public void SetPoz(int poz) {
-        this.pozition = poz;
-    }
 
     @Override
     public int Isanim() {

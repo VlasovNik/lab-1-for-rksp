@@ -48,7 +48,7 @@ public abstract class BaseAI extends Thread implements Serializable
             Move();
             try
             {
-                sleep(10);
+                sleep(100);
             }
             catch (InterruptedException e)
             {
