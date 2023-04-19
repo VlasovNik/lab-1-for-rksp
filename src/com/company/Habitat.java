@@ -350,6 +350,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
                     oos.writeObject(Object);
                     XStream xstream = new XStream();
+                    xstream.processAnnotations(Objects.class);
                     String xml = xstream.toXML(Object);
                     System.out.println(xml);
                 } catch (Exception ex) {
