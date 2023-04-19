@@ -10,15 +10,11 @@ import java.util.Vector;
 
 public class Habitat extends JComponent implements ActionListener, Serializable, MouseListener {
     JFrame f = new JFrame("Lab1");
-    private ActionListener Actions;
     private static Habitat Instance;
     private boolean isAnimSmile = true;
     private boolean isAnimImage = true;
 
-    private Random random = new Random();
-
     public int time = 0;
-    public boolean flag = false;
 
     private Timer t = new Timer(100, this::actionPerformed);
     private Timer t1  = new Timer(100, this::actionPerformed);
@@ -26,7 +22,8 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
 
 
     private Font font = new Font("Verdana", Font.PLAIN, 11);
-    private static JLabel timer = new JLabel("Time");
+    private static JLabel info = new JLabel("Состояние программы");
+    private static JLabel infosave = new JLabel("");
     private static JPanel panel = new JPanel();
     private static JButton start = new JButton("Старт");
     private static JButton stop = new JButton("Стоп");
@@ -36,7 +33,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     private static JButton stopAnimImage = new JButton("Остановить Анимацию картинок");
     private static JButton readset = new JButton("Загрузить");
     private static JButton saveset = new JButton("Сохранить");
-    private static ButtonGroup group = new ButtonGroup();
+    private static JButton DelAll = new JButton("Удалить все объекты");
 
     //settings labels
 
@@ -44,12 +41,10 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     private static final JLabel Line2 = new JLabel(" -----------------------------------------");
     private static final JLabel Line3 = new JLabel("-----------------------------------------");
     private static final JLabel Line4 = new JLabel("-----------------------------------------");
-    private static final JLabel Line5 = new JLabel("----------------------------------------- ");
+    private static final JLabel Line5 = new JLabel("-----------------------------------------");
 
     //список объектов
     public static Vector<Objects> Object = new Vector<Objects>();
-    //private static HashSet<Integer> ID = new HashSet<Integer>();
-    //private static TreeMap<Integer, Integer> Borntime = new TreeMap<Integer, Integer>();
     java.awt.Image img = new ImageIcon("src/1.png").getImage();
 
 
@@ -61,41 +56,6 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     }
 
     public Habitat() {
-        f.addWindowListener(new WindowListener() {
-            @Override
-            public void windowOpened(WindowEvent e) {
-            }
-
-            public void windowClosing(WindowEvent event) {
-                System.exit(0);
-
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
-        });
         t.setActionCommand("Timer");
         t1.setActionCommand("Timer");
         t2.setActionCommand("Timer");
@@ -149,33 +109,47 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
         saveset.setFocusable(false);
         saveset.setVisible(true);
 
+        DelAll.addActionListener(this::actionPerformed);
+        DelAll.setActionCommand("DelAll");
+        DelAll.setBackground(Color.white);
+        DelAll.setFocusable(false);
+        DelAll.setVisible(true);
 
 
-        //timer
-        timer.setFocusable(false);
-        timer.setLocation(100, 0);
-        timer.setSize(300, 15);
-        timer.setForeground(Color.BLACK);
-        timer.setFont(font);
+        info.setFocusable(false);
+        info.setLocation(100, 0);
+        info.setSize(300, 15);
+        info.setForeground(Color.BLACK);
+        info.setFont(font);
+
+        infosave.setFocusable(false);
+        infosave.setLocation(100, 0);
+        infosave.setSize(300, 15);
+        infosave.setForeground(Color.BLACK);
+        infosave.setFont(font);
 
 
         //panel
         panel.setLayout(new FlowLayout());
         panel.setBounds(1035, 0, 200, 630);
-        panel.setBackground(Color.yellow);
+        panel.setBackground(Color.gray);
         panel.setFocusable(false);
         panel.add(start);
         panel.add(stop);
         panel.add(Line1);
+        panel.add(info);
+        panel.add(Line2);
         panel.add(startAnimSmile);
         panel.add(stopAnimSmile);
-        panel.add(Line2);
+        panel.add(Line3);
         panel.add(startAnimImage);
         panel.add(stopAnimImage);
+        panel.add(Line4);
+        panel.add(DelAll);
+        panel.add(Line5);
         panel.add(readset);
-        panel.add(saveset);;
-
-        //panel.addMouseListener(this);
+        panel.add(saveset);
+        panel.add(infosave);
 
         //--------------------------------------
         //frame
@@ -193,16 +167,6 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
         f.requestFocus();
     }
 
-    class ExitAction extends AbstractAction {
-        ExitAction() {
-            putValue(NAME, "Выход");
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            System.exit(0);
-        }
-    }
-
     @Override
     public void paint(Graphics g) {
         Graphics2D g1 = (Graphics2D) g;
@@ -213,6 +177,8 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
         g1.drawLine(1034, 631, 1250, 631);
         for (Objects i : Object) {
             for(Objects a : Object) {
+                Rectangle bounds = a.getBounds();
+                g1.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
                 if (a.nomer == 1) {
                     g.setColor(Color.YELLOW);
                     g.fillOval(a.x, a.y, 100, 100);
@@ -221,17 +187,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     g.fillOval(a.x+65, a.y+25, 10, 10);
                     g.drawArc(a.x+20, a.y+50, 60, 30, 180, 180);
                 } else {
-                    int width = img.getWidth(null);
-                    int height = img.getHeight(null);
-                    // Сохраняем текущую матрицу преобразования
-                    AffineTransform at = new AffineTransform();
-                    at.translate(a.x, a.y); // перемещаем AffineTransform в центр изображения
-                    at.rotate(0, width/4 , height/4 ); // поворачиваем AffineTransform на угол angle вокруг центра изображения
-                    at.translate(-width/4, -height/4); // перемещаем AffineTransform обратно в левый верхний угол изображения
-
-                    // рисуем изображение, используя AffineTransform
-                    g1.drawImage(img,at,null);
-                    // Восстанавливаем исходную матрицу преобразования
+                    g1.drawImage(img, a.x, a.y,null);
                 }
             }
         }
@@ -242,18 +198,11 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
         switch (e.getActionCommand()) {
             case "Timer": {
                 time += 1;
-                timer.setText(Integer.toString(time / 10) + " сек");
                 repaint();
                 break;
             }
             case "Start": {
-                Object.add(new Smile(1));
-                Object.add(new Image(1));
-                for (Objects a : Object) {
-                    a.isanim = 1;
-                    a.startANSmile();
-                    a.startANImage();
-                }
+                info.setText("Запущено");
                 if (t.isRunning() == false &&t1.isRunning() == false && t2.isRunning() == false) {
                     time = 0;
                     Object.clear();
@@ -323,6 +272,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 break;
             }
             case "Stop": {
+                info.setText("Остановлено");
                 if (t.isRunning() == true) {
                     for (Objects a : Object) {
                         a.isanim = 0;
@@ -336,13 +286,20 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 }
                 break;
             }
+            case "DelALl":{
+                Object.clear();
+                repaint();
+                break;
+            }
             case "Saveset": {
                 try {
                     FileOutputStream fos = new FileOutputStream("src/obj.dat");
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
                     oos.writeObject(Object);
+                    infosave.setText("Успешно сохранено");
 
                 } catch (Exception ex) {
+                    infosave.setText("Ошибка");
                     ex.printStackTrace();
                 }
                 break;
@@ -355,9 +312,12 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     FileInputStream fis = new FileInputStream("src/obj.dat");
                     ObjectInputStream iis = new ObjectInputStream(fis);
                     Object = (Vector<Objects>) iis.readObject();
+                    infosave.setText("Успешно загружено");
                 } catch (Exception ex) {
+                    infosave.setText("Ошибка");
                     ex.printStackTrace();
                 }
+                info.setText("Запущено");
                 isAnimSmile = true;
                 isAnimImage = true;
                 for (Objects a : Object) {
@@ -367,6 +327,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                     a.startANImage();
                 }
                 t.start();
+                t1.start();
                 t2.start();
                 repaint();
                 break;
@@ -383,36 +344,35 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     public void mousePressed(MouseEvent e) {
         if(t.isRunning() == true){
             Point clickPoint = e.getPoint();
-            int x = clickPoint.x - 30;
-            int y = clickPoint.y - 30;
+            int x = clickPoint.x - f.getInsets().left;
+            int y = clickPoint.y - f.getInsets().top;
             Objects objToDelete = null;
-            Random random = new Random();
-            int randomInt = random.nextInt(2) + 1;
-            for (Objects obj :Object) {
-                if ((x >= obj.x-15 && x <= obj.x+100) && (y >= obj.y-15 && y <= obj.y+100)) {
-                    int k = obj.x;
-                    int n = obj.y;
-                    objToDelete = obj;
+            for (Objects a :Object) {
+                Rectangle bounds = a.getBounds();
+                if (bounds.contains(x,y)) {
+                    objToDelete = a;
                     break;
                 }
             }
-            if (objToDelete != null) {
-                Object.remove(objToDelete);
-            } else {
-                if(randomInt == 1){
-                    if(isAnimImage == true){
-                        Object.add(new Image(1,x,y));
-                    }
-                    else{
-                        Object.add(new Image(0,x,y));
-                    }
-                }
-                else{
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                if (objToDelete != null) {
+                    Object.remove(objToDelete);
+                } else {
                     if(isAnimSmile == true){
                         Object.add(new Smile(1,x,y));
                     }
                     else{
                         Object.add(new Smile(0,x,y));
+                    }
+                }
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                if (objToDelete != null) {
+                    Object.remove(objToDelete);
+                } else {
+                    if (isAnimImage == true) {
+                        Object.add(new Image(1, x, y));
+                    } else {
+                        Object.add(new Image(0, x, y));
                     }
                 }
             }

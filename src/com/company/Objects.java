@@ -1,10 +1,11 @@
 package com.company;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Objects implements MoveAI, Serializable {
-    public int nomer, x, y, id, isanim;
+    public int nomer, x, y, id, isanim, poz,xy;
     public double angle = 0;
     public BaseAI intel;
     public Objects(){
@@ -25,6 +26,10 @@ public abstract class Objects implements MoveAI, Serializable {
         intel.Wait();
     }
 
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, 100, 100);
+    }
+
 }
 
 class Smile extends Objects implements Serializable {
@@ -36,6 +41,7 @@ class Smile extends Objects implements Serializable {
         else{
             this.isanim = 0;
         }
+        this.poz = 0;
         this.nomer = 1;
         intel = new SmileAI(this);
         intel.start();
@@ -65,19 +71,12 @@ class Smile extends Objects implements Serializable {
         public void Move() {
             int t = Isanim();
             if (t == 1) {
-                double avgX = Getx(); // получаем начальное среднее значение по x
-                double avgY = Gety(); // получаем начальное среднее значение по y
-                double speedX = 0; // начальная скорость по x
-                double speedY = 0; // начальная скорость по y
-                double damping = 0.98; // коэффициент затухания скорости
-                double deltaX = (Math.random() * 2 - 1) * 10; // случайное изменение по x
-                double deltaY = (Math.random() * 2 - 1) * 10; // случайное изменение по y
-
-                speedX += deltaX; // добавляем изменение к скорости по x
-                speedY += deltaY; // добавляем изменение к скорости по y
-
-                avgX += speedX; // обновляем среднее значение по x
-                avgY += speedY; // обновляем среднее значение по y
+                double avgX = Getx();
+                double avgY = Gety();
+                double deltaX = (Math.random() * 2 - 1) * 5;
+                double deltaY = (Math.random() * 2 - 1) * 5;
+                avgX += deltaX*0.9;
+                avgY += deltaY*0.9;
                 Move.Setx((int) avgX);
                 Move.Sety((int) avgY);
                 }
@@ -110,10 +109,21 @@ class Smile extends Objects implements Serializable {
     }
 
     @Override
-    public void Setangle(double k) {
-
+    public int Getpoz() {
+        return this.poz;
     }
-
+    @Override
+    public void Setpoz(int k) {
+        this.poz = k;
+    }
+    @Override
+    public int Getxy() {
+        return this.xy;
+    }
+    @Override
+    public void Setxy(int k) {
+        this.xy = k;
+    }
 
 }
 
@@ -128,6 +138,7 @@ class Image extends Objects implements Serializable{
         else{
             this.isanim = 0;
         }
+        this.poz = 0;
         this.nomer = 2;
         intel = new ImageAI(this);
         intel.start();
@@ -156,10 +167,49 @@ class Image extends Objects implements Serializable{
         @Override
         public void Move() {
             int t = Isanim();
-            if (t ==1){
-                double k = 0;
-                k++;
-                Move.Setangle(k);
+            if (t ==1) {
+                int xy = Getxy();
+                int x = Getx();
+                int y = Gety();
+                int k = Getpoz();
+                int n = 50;
+                if (k == 0) {
+                    if (xy != n) {
+                        x += 1;
+                        Move.Setxy(xy+1);
+                        Move.Setx(x);
+                    } else {
+                        Move.Setpoz(1);
+                        Move.Setxy(0);
+                    }
+                } else if (k == 1) {
+                    if (xy != n) {
+                        y += 1;
+                        Move.Setxy(xy+1);
+                        Move.Sety(y);
+                    } else {
+                        Move.Setpoz(2);
+                        Move.Setxy(0);
+                    }
+                } else if (k == 2) {
+                    if (xy != n) {
+                        x -= 1;
+                        Move.Setxy(xy+1);
+                        Move.Setx(x);
+                    } else {
+                        Move.Setpoz(3);
+                        Move.Setxy(0);
+                    }
+                } else if (k == 3) {
+                    if (xy != n) {
+                        y -= 1;
+                        Move.Setxy(xy+1);
+                        Move.Sety(y);
+                    } else {
+                        Move.Setpoz(0);
+                        Move.Setxy(0);
+                    }
+                }
             }
         }
 
@@ -173,6 +223,9 @@ class Image extends Objects implements Serializable{
     public int Gety() {
         return this.y;
     }
+    public double Getangle() {
+        return this.angle;
+    }
 
     @Override
     public void Setx(int xx) {
@@ -183,16 +236,27 @@ class Image extends Objects implements Serializable{
     public void Sety(int yy) {
         this.y = yy;
     }
-
-
     @Override
     public int Isanim() {
         return this.isanim;
     }
-
     @Override
-    public void Setangle(double k) {
-        this.angle = k;
+    public int Getpoz() {
+        return this.poz;
     }
 
+    @Override
+    public int Getxy() {
+        return this.xy;
+    }
+
+    @Override
+    public void Setpoz(int k) {
+        this.poz = k;
+    }
+
+    @Override
+    public void Setxy(int k) {
+        this.xy = k;
+    }
 }
