@@ -33,19 +33,6 @@ public abstract class Objects implements MoveAI, Serializable {
 }
 
 class Smile extends Objects implements Serializable {
-    public Smile(int n) {
-        super();
-        if(n == 1){
-            this.isanim = 1;
-        }
-        else{
-            this.isanim = 0;
-        }
-        this.poz = 0;
-        this.nomer = 1;
-        intel = new SmileAI(this);
-        intel.start();
-    }
     public Smile(int n,int x, int y) {
         super();
         if(n == 1){
@@ -129,20 +116,6 @@ class Smile extends Objects implements Serializable {
 
 class Image extends Objects implements Serializable{
 
-    public Image(int i) {
-        super();
-        this.angle = 0;
-        if(i == 1){
-            this.isanim = 1;
-        }
-        else{
-            this.isanim = 0;
-        }
-        this.poz = 0;
-        this.nomer = 2;
-        intel = new ImageAI(this);
-        intel.start();
-    }
     public Image(int i,int x, int y) {
         super();
         this.angle = 0;
@@ -222,9 +195,6 @@ class Image extends Objects implements Serializable{
     @Override
     public int Gety() {
         return this.y;
-    }
-    public double Getangle() {
-        return this.angle;
     }
 
     @Override

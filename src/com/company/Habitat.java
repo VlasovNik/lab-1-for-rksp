@@ -3,9 +3,7 @@ package com.company;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.io.*;
-import java.util.Random;
 import java.util.Vector;
 
 public class Habitat extends JComponent implements ActionListener, Serializable, MouseListener {
@@ -25,10 +23,10 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     private static JLabel info = new JLabel("Состояние программы");
     private static JLabel infosave = new JLabel("");
     private static JPanel panel = new JPanel();
-    private static JButton start = new JButton("Старт");
-    private static JButton stop = new JButton("Стоп");
+    private static JButton start = new JButton("Запустить анимацию всех");
+    private static JButton stop = new JButton("Остановить анимацию всех");
     private static JButton startAnimSmile = new JButton("Запустить анимацию смайлов");
-    private static JButton stopAnimSmile = new JButton("Остановить Анимацию смайлов");
+    private static JButton stopAnimSmile = new JButton("Остановить анимацию смайлов");
     private static JButton startAnimImage = new JButton("Запустить анимацию картинок");
     private static JButton stopAnimImage = new JButton("Остановить Анимацию картинок");
     private static JButton readset = new JButton("Загрузить");
@@ -56,40 +54,43 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     }
 
     public Habitat() {
+        t.start();
+        t1.start();
+        t2.start();
         t.setActionCommand("Timer");
         t1.setActionCommand("Timer");
         t2.setActionCommand("Timer");
 
         //buttons
-        start.addActionListener(this::actionPerformed);
+        start.addActionListener(this);
         start.setActionCommand("Start");
         start.setBackground(Color.white);
         start.setFocusable(false);
         start.setVisible(true);
 
-        stop.addActionListener(this::actionPerformed);
+        stop.addActionListener(this);
         stop.setActionCommand("Stop");
         stop.setBackground(Color.white);
         stop.setFocusable(false);
         stop.setVisible(true);
 
-        startAnimSmile.addActionListener(this::actionPerformed);
+        startAnimSmile.addActionListener(this);
         startAnimSmile.setActionCommand("startAnimSmile");
         startAnimSmile.setBackground(Color.white);
         startAnimSmile.setFocusable(false);
         stopAnimSmile.setVisible(true);
-        stopAnimSmile.addActionListener(this::actionPerformed);
+        stopAnimSmile.addActionListener(this);
         stopAnimSmile.setActionCommand("stopAnimSmile");
         stopAnimSmile.setBackground(Color.white);
         stopAnimSmile.setFocusable(false);
         stopAnimSmile.setVisible(true);
 
-        startAnimImage.addActionListener(this::actionPerformed);
+        startAnimImage.addActionListener(this);
         startAnimImage.setActionCommand("startAnimImage");
         startAnimImage.setBackground(Color.white);
         startAnimImage.setFocusable(false);
         startAnimImage.setVisible(true);
-        stopAnimImage.addActionListener(this::actionPerformed);
+        stopAnimImage.addActionListener(this);
         stopAnimImage.setActionCommand("stopAnimImage");
         stopAnimImage.setBackground(Color.white);
         stopAnimImage.setFocusable(false);
@@ -97,19 +98,19 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
 
 
 
-        readset.addActionListener(this::actionPerformed);
+        readset.addActionListener(this);
         readset.setActionCommand("Readset");
         readset.setBackground(Color.white);
         readset.setFocusable(false);
         readset.setVisible(true);
 
-        saveset.addActionListener(this::actionPerformed);
+        saveset.addActionListener(this);
         saveset.setActionCommand("Saveset");
         saveset.setBackground(Color.white);
         saveset.setFocusable(false);
         saveset.setVisible(true);
 
-        DelAll.addActionListener(this::actionPerformed);
+        DelAll.addActionListener(this);
         DelAll.setActionCommand("DelAll");
         DelAll.setBackground(Color.white);
         DelAll.setFocusable(false);
@@ -202,21 +203,22 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 break;
             }
             case "Start": {
-                info.setText("Запущено");
-                if (t.isRunning() == false &&t1.isRunning() == false && t2.isRunning() == false) {
-                    time = 0;
-                    Object.clear();
-                    repaint();
-                    t.start();
-                    t1.start();
-                    t2.start();
-                    repaint();
+                info.setText("Анимация всех активна");
+                if (t1.isRunning() == false && t2.isRunning() == false) {
+                    for (Objects a : Object) {
+                        a.isanim = 1;
+                        a.startANSmile();
+                        a.startANImage();
+                        t1.start();
+                        t2.start();
+                        repaint();
+                    }
                 }
-                repaint();
                 break;
             }
             case "startAnimSmile":{
                 if (t1.isRunning() == false) {
+                    info.setText("Анимация смайлов активна");
                     for (Objects a : Object) {
                         if(a.nomer == 1){
                             a.isanim = 1;
@@ -231,6 +233,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             }
             case "startAnimImage":{
                 if (t2.isRunning() == false) {
+                    info.setText("Анимация картинок активна");
                     for (Objects a : Object) {
                         if(a.nomer == 2){
                             a.isanim = 1;
@@ -245,6 +248,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             }
             case "stopAnimSmile":{
                 if (t1.isRunning() == true) {
+                    info.setText("Анимация смайлов остановлена");
                     for (Objects a : Object) {
                         if(a.nomer == 1){
                             a.isanim = 0;
@@ -259,6 +263,7 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
             }
             case "stopAnimImage":{
                 if (t2.isRunning() == true) {
+                    info.setText("Анимация картинок остановлена");
                     for (Objects a : Object) {
                         if(a.nomer == 2){
                             a.isanim = 0;
@@ -272,21 +277,20 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
                 break;
             }
             case "Stop": {
-                info.setText("Остановлено");
+                info.setText("Анимация всех остановлена");
                 if (t.isRunning() == true) {
                     for (Objects a : Object) {
                         a.isanim = 0;
                         a.stopANSmile();
                         a.stopANImage();
                     }
-                    t.stop();
                     t1.stop();
                     t2.stop();
                     repaint();
                 }
                 break;
             }
-            case "DelALl":{
+            case "DelAll":{
                 Object.clear();
                 repaint();
                 break;
