@@ -46,14 +46,8 @@ public class Habitat extends JComponent implements ActionListener, Serializable,
     java.awt.Image img = new ImageIcon("src/1.png").getImage();
 
 
-    public static Habitat GetHabitatInstance() {
-        if (Instance == null) {
-            Instance = new Habitat();
-        }
-        return Instance;
-    }
 
-    public Habitat() {
+    public Habitat(JFrame f) {
         t.start();
         t1.start();
         t2.start();
